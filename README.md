@@ -105,6 +105,11 @@ will need updating to match.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, tests, and lint commands.
 
+## Security
+
+See [SECURITY.md](SECURITY.md) for reporting vulnerabilities and notes on
+the sensitive files this tool writes to disk.
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=thomas-samoht/g4-trial-cert-requestor&type=Date)](https://star-history.com/#thomas-samoht/g4-trial-cert-requestor&Date)
