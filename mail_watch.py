@@ -133,6 +133,7 @@ def wait_and_process(
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
         out_dir = output_root / f"{_slugify(oin)}-{_slugify(cn)}-{timestamp}"
         out_dir.mkdir(parents=True, exist_ok=True)
+        out_dir.chmod(0o700)
 
         zip_path = out_dir / filename
         zip_path.write_bytes(zip_bytes)
@@ -148,7 +149,9 @@ def wait_and_process(
         for cer_file in cer_files:
             _convert_cer_to_crt(cer_file, cer_file.with_suffix(".crt"))
 
-        (out_dir / "pfx-password.txt").write_text(pfx_password + "\n")
+        password_path = out_dir / "pfx-password.txt"
+        password_path.write_text(pfx_password + "\n")
+        password_path.chmod(0o600)
 
         imap.store(uid, "+FLAGS", "\\Seen")
 

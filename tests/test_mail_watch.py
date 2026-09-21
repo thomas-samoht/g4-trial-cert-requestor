@@ -1,5 +1,6 @@
 import datetime as dt
 import io
+import stat
 import zipfile
 from email.header import Header
 from email.message import EmailMessage
@@ -247,13 +248,16 @@ def test_wait_and_process_downloads_and_converts_certificate(tmp_path):
             dt.datetime.now(dt.UTC) - dt.timedelta(minutes=1),
         )
 
-    assert (out_dir / "pfx-password.txt").read_text() == "trialG4-secret\n"
+    password_path = out_dir / "pfx-password.txt"
+    assert password_path.read_text() == "trialG4-secret\n"
     crt_files = list(out_dir.glob("*.crt"))
     assert len(crt_files) == 1
     loaded = x509.load_pem_x509_certificate(crt_files[0].read_bytes())
     assert loaded.public_bytes(serialization.Encoding.DER) == der_bytes
     imap.store.assert_called_once_with("1", "+FLAGS", "\\Seen")
     imap.logout.assert_called_once()
+    assert stat.S_IMODE(out_dir.stat().st_mode) == 0o700
+    assert stat.S_IMODE(password_path.stat().st_mode) == 0o600
 
 
 def test_wait_and_process_warns_when_no_cer_file(tmp_path, capsys):
