@@ -98,6 +98,10 @@ its `cert-form.js`). `request_cert.py`:
 If PKIpartners changes the form, confirmation page, or email format, this
 will need updating to match.
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, tests, and lint commands.
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=thomas-samoht/g4-trial-cert-requestor&type=Date)](https://star-history.com/#thomas-samoht/g4-trial-cert-requestor&Date)
