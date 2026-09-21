@@ -103,12 +103,29 @@ def test_require_exits_when_missing():
 # --- main(): mail step is optional ---
 
 
-def _mock_session():
+# --- fetch_csrf_token ---
+
+
+def test_fetch_csrf_token_exits_when_token_missing():
+    session = mock.Mock()
+    resp = mock.Mock(text="<html>no token here</html>")
+    resp.raise_for_status = mock.Mock()
+    session.get.return_value = resp
+
+    with pytest.raises(SystemExit):
+        request_cert.fetch_csrf_token(session)
+
+
+def _mock_session(submit_ok=True, submit_status=200, submit_text=None):
     embed_resp = mock.Mock(text='name="csrf_token" value="abc123"')
     embed_resp.raise_for_status = mock.Mock()
 
-    submit_resp = mock.Mock(status_code=200, ok=True)
-    submit_resp.text = "wachtwoord</strong> is: <code>trialG4-secret</code>"
+    submit_resp = mock.Mock(status_code=submit_status, ok=submit_ok)
+    submit_resp.text = (
+        submit_text
+        if submit_text is not None
+        else "wachtwoord</strong> is: <code>trialG4-secret</code>"
+    )
 
     session = mock.Mock()
     session.get.return_value = embed_resp
@@ -122,10 +139,10 @@ def _write_config(tmp_path: Path, extra: str = "") -> Path:
     return config_path
 
 
-def _run_main(config_path: Path):
+def _run_main(config_path: Path, cn: str = "Some Org"):
     argv = [
         "request_cert.py",
-        "Some Org",
+        cn,
         "00000003123456780000",
         "--config",
         str(config_path),
@@ -162,3 +179,34 @@ def test_main_waits_for_mail_when_mail_server_set(tmp_path):
         _run_main(config_path)
 
     wait_mock.assert_called_once()
+
+
+def test_main_exits_when_cn_too_short(tmp_path):
+    config_path = _write_config(tmp_path)
+
+    with pytest.raises(SystemExit):
+        _run_main(config_path, cn="x")
+
+
+def test_main_exits_when_submit_fails(tmp_path, capsys):
+    config_path = _write_config(tmp_path)
+    session = _mock_session(submit_ok=False, submit_status=500, submit_text="server error")
+
+    with (
+        mock.patch.object(request_cert.requests, "Session", return_value=session),
+        pytest.raises(SystemExit),
+    ):
+        _run_main(config_path)
+
+    assert "Request failed" in capsys.readouterr().out
+
+
+def test_main_exits_when_pfx_password_missing(tmp_path):
+    config_path = _write_config(tmp_path)
+    session = _mock_session(submit_text="no password here")
+
+    with (
+        mock.patch.object(request_cert.requests, "Session", return_value=session),
+        pytest.raises(SystemExit),
+    ):
+        _run_main(config_path)

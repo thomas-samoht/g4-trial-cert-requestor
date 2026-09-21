@@ -16,6 +16,10 @@ jobs:
           enable-cache: true
       - run: uv sync --locked
       - run: uv run pytest
+      - uses: codecov/codecov-action@v5
+        with:
+          files: coverage.xml
+          fail_ci_if_error: false
 
   lint:
     runs-on: ubuntu-latest

@@ -1,6 +1,7 @@
 # g4-trial-cert-requestor
 
 [![CI](https://github.com/thomas-samoht/g4-trial-cert-requestor/actions/workflows/ci.yml/badge.svg)](https://github.com/thomas-samoht/g4-trial-cert-requestor/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/thomas-samoht/g4-trial-cert-requestor/graph/badge.svg)](https://codecov.io/gh/thomas-samoht/g4-trial-cert-requestor)
 [![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
