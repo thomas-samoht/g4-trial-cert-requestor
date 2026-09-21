@@ -147,11 +147,15 @@ def main() -> None:
     phone = config.get("PHONE", "+31 6 12345678")
     key_size = config.get("KEY_SIZE", "4096")
 
-    # Fail before submitting anything if the mailbox isn't configured -
-    # a submitted request whose email can't be fetched is wasted.
-    require(config, "MAIL_USERNAME")
-    require(config, "MAIL_PASSWORD")
-    require(config, "MAIL_SERVER")
+    # Mail polling is optional: only require the mailbox settings if
+    # MAIL_SERVER is configured. Fail before submitting anything if it's
+    # configured but incomplete - a submitted request whose email can't
+    # be fetched is wasted.
+    mail_enabled = bool(config.get("MAIL_SERVER"))
+    if mail_enabled:
+        require(config, "MAIL_USERNAME")
+        require(config, "MAIL_PASSWORD")
+        require(config, "MAIL_SERVER")
 
     session = requests.Session()
     csrf_token = fetch_csrf_token(session)
@@ -193,6 +197,10 @@ def main() -> None:
 
     print("Request submitted.")
     print(f"PFX password: {pfx_password}")
+
+    if not mail_enabled:
+        print("MAIL_SERVER not configured; skipping wait for certificate email.")
+        return
 
     out_dir = mail_watch.wait_and_process(config, cn, oin, pfx_password, not_before)
     print(f"Done. Certificate files saved to: {out_dir}")

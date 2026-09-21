@@ -1,9 +1,9 @@
 # g4-trial-cert-requestor
 
 Command-line automation for requesting a G4 TRIAL certificate from
-[g4trial.pkipartners.nl](https://g4trial.pkipartners.nl/embed), waiting
-for the resulting email, and unpacking the certificate, without ever
-touching the web form or a mail client.
+[g4trial.pkipartners.nl](https://g4trial.pkipartners.nl/embed), and
+optionally waiting for the resulting email and unpacking the
+certificate, without ever touching the web form or a mail client.
 
 It always requests the profile **Private TLS Generic Devices Organization
 Validated ServerAuthentication (44.35.11)** (`G4TRIALEEPrivGTLSSYS2025`).
@@ -21,7 +21,9 @@ Edit `config.env` and fill in:
 - `EMAIL`: where the certificate is sent (also the account the mailbox
   settings below must read from).
 - `MAIL_USERNAME` / `MAIL_PASSWORD` / `MAIL_SERVER`: IMAP login for that
-  mailbox (e.g. `mail.server.com`).
+  mailbox (e.g. `mail.server.com`). Optional - leave `MAIL_SERVER`
+  unset/blank to skip waiting for the email; the script then stops
+  right after submitting the request and printing the PFX password.
 
 `DOMAINS`, `PHONE`, `KEY_SIZE`, `MAIL_SENDER`, `MAIL_POLL_INTERVAL`,
 `MAIL_TIMEOUT`, and `OUTPUT_FOLDER` have working defaults but can be
@@ -53,8 +55,10 @@ Or pass both as arguments to skip the prompts:
 uv run request_cert.py "Some Organization" 00000003123456780000
 ```
 
-The script then submits the request, waits (polling IMAP) for the reply
-from `g4trial@pkipartners.nl`, and unpacks it.
+The script then submits the request and, if `MAIL_SERVER` is
+configured, waits (polling IMAP) for the reply from
+`g4trial@pkipartners.nl` and unpacks it. Otherwise it stops right
+after printing the PFX password.
 
 ## Output
 
@@ -77,11 +81,12 @@ its `cert-form.js`). `request_cert.py`:
    CN/OIN plus the fixed values from `config.env`.
 3. Parses the PFX password out of the confirmation page's
    `alert-success` block.
-4. Hands off to `mail_watch.py`, which logs into the configured mailbox
-   over IMAP, polls for an unread message from `MAIL_SENDER` received
-   after the request was submitted, downloads its `.zip` attachment,
-   extracts it, converts the `.cer` to PEM, writes the password file, and
-   marks the email as read.
+4. If `MAIL_SERVER` is configured, hands off to `mail_watch.py`, which
+   logs into the configured mailbox over IMAP, polls for an unread
+   message from `MAIL_SENDER` received after the request was submitted,
+   downloads its `.zip` attachment, extracts it, converts the `.cer` to
+   PEM, writes the password file, and marks the email as read.
+   Otherwise the script stops after step 3.
 
 If PKIpartners changes the form, confirmation page, or email format, this
 will need updating to match.
