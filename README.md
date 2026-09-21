@@ -1,5 +1,7 @@
 # g4-trial-cert-requestor
 
+[![CI](https://github.com/thomas-samoht/g4-trial-cert-requestor/actions/workflows/ci.yml/badge.svg)](https://github.com/thomas-samoht/g4-trial-cert-requestor/actions/workflows/ci.yml)
+
 Command-line automation for requesting a G4 TRIAL certificate from
 [g4trial.pkipartners.nl](https://g4trial.pkipartners.nl/embed), and
 optionally waiting for the resulting email and unpacking the
