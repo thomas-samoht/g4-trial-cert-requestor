@@ -16,6 +16,22 @@ certificate, without ever touching the web form or a mail client.
 It always requests the profile **Private TLS Generic Devices Organization
 Validated ServerAuthentication (44.35.11)** (`G4TRIALEEPrivGTLSSYS2025`).
 
+## Disclaimer
+
+> [!WARNING]
+> **No affiliation with PKIpartners.** This is an independent, unofficial
+> tool, not affiliated with, endorsed by, or supported by PKIpartners in
+> any way. "PKIpartners" and "G4 TRIAL" are their names and programs,
+> referenced here only to describe what this tool talks to.
+>
+> **Use at your own risk, no liability accepted.** This tool is provided
+> "as is," with no warranty of any kind. The author accepts **no
+> liability or responsibility whatsoever** for any damages, losses,
+> rejected or invalid certificates, mishandled credentials, or other
+> problems that result from using it, whether caused by a bug in this
+> tool, misuse, or a change on PKIpartners' side. See
+> [LICENSE](LICENSE) for the full disclaimer.
+
 ## Setup
 
 Requires [uv](https://docs.astral.sh/uv/).
