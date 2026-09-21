@@ -206,5 +206,5 @@ def main() -> None:
     print(f"Done. Certificate files saved to: {out_dir}")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

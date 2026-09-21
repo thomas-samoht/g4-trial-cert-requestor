@@ -16,6 +16,12 @@ jobs:
           enable-cache: true
       - run: uv sync --locked
       - run: uv run pytest
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          fail_ci_if_error: false
 
   lint:
     runs-on: ubuntu-latest

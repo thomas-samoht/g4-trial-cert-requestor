@@ -10,6 +10,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
     "ruff>=0.16.8",
 ]
 
@@ -22,3 +23,13 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
+addopts = [
+    "--cov=request_cert",
+    "--cov=mail_watch",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "--cov-fail-under=90",
+]
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover"]

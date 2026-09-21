@@ -12,7 +12,8 @@ cd g4-trial-cert-requestor
 cp config.example.env config.env
 ```
 
-`uv sync` installs both the runtime and dev dependencies (pytest, ruff):
+`uv sync` installs both the runtime and dev dependencies (pytest, pytest-cov,
+ruff):
 
 ```bash
 uv sync
@@ -23,6 +24,10 @@ uv sync
 ```bash
 uv run pytest
 ```
+
+This also runs coverage and fails if total coverage drops below 90 percent
+(configured via `--cov-fail-under=90` in `pyproject.toml`). New code should
+come with tests that keep it above that bar.
 
 ## Linting and formatting
 
