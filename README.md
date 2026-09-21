@@ -81,6 +81,8 @@ Each run creates `{OUTPUT_FOLDER}/{oin}-{cn}-{datetime}/` containing:
 
 ## How it works
 
+![Flow diagram: CLI to web request to email to parse to output](docs/flow.gif)
+
 The `/embed` page's form posts directly to `/submit` (no AJAX/JSON, per
 its `cert-form.js`). `request_cert.py`:
 
