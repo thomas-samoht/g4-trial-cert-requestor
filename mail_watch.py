@@ -43,7 +43,14 @@ def _decode(value) -> str:
     return decoded
 
 
-def _find_matching_uid(imap: imaplib.IMAP4_SSL, sender: str, not_before: datetime):
+def _raw_message_bytes(msg_data: list) -> bytes:
+    raw = msg_data[0][1]
+    if not isinstance(raw, bytes):
+        raise RuntimeError("Unexpected IMAP response format.")
+    return raw
+
+
+def _find_matching_uid(imap: imaplib.IMAP4_SSL, sender: str, not_before: datetime) -> str | None:
     status, data = imap.search(None, "UNSEEN", "FROM", f'"{sender}"')
     if status != "OK" or not data or not data[0]:
         return None
@@ -52,7 +59,7 @@ def _find_matching_uid(imap: imaplib.IMAP4_SSL, sender: str, not_before: datetim
         status, msg_data = imap.fetch(num, "(BODY.PEEK[HEADER.FIELDS (DATE)])")
         if status != "OK" or not msg_data or not msg_data[0]:
             continue
-        header = email.message_from_bytes(msg_data[0][1])
+        header = email.message_from_bytes(_raw_message_bytes(msg_data))
         date_str = header.get("Date")
         msg_date = None
         if date_str:
@@ -65,17 +72,17 @@ def _find_matching_uid(imap: imaplib.IMAP4_SSL, sender: str, not_before: datetim
                 msg_date = msg_date.replace(tzinfo=UTC)
             if msg_date < not_before:
                 continue
-        return num
+        return num.decode()
 
     return None
 
 
-def _extract_zip_attachment(imap: imaplib.IMAP4_SSL, uid: bytes):
+def _extract_zip_attachment(imap: imaplib.IMAP4_SSL, uid: str):
     status, msg_data = imap.fetch(uid, "(RFC822)")
     if status != "OK" or not msg_data or not msg_data[0]:
         raise RuntimeError("Failed to fetch the matching email.")
 
-    msg = email.message_from_bytes(msg_data[0][1])
+    msg = email.message_from_bytes(_raw_message_bytes(msg_data))
     for part in msg.walk():
         filename = part.get_filename()
         if not filename:
