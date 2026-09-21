@@ -1,6 +1,7 @@
 # Contributing
 
-Thanks for considering a contribution to this project.
+Thanks for considering a contribution to this project. Participation is
+governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Setup
 
@@ -63,3 +64,9 @@ Use the [bug report template](.github/ISSUE_TEMPLATE/bug_report.md) when
 opening an issue. This project depends on the form and email format at
 `g4trial.pkipartners.nl` staying the same, so if something changed on their
 end, please mention it.
+
+## Requesting features
+
+Use the
+[feature request template](.github/ISSUE_TEMPLATE/feature_request.md)
+when opening an issue.
