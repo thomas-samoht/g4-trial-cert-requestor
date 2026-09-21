@@ -5,19 +5,17 @@ title: ""
 labels: bug
 ---
 
-**What happened**
+## What happened
 
+## Expected behavior
 
-**Expected behavior**
+## Command / config used
 
-
-**Command / config used**
 (redact EMAIL, OIN, MAIL_* credentials)
 
+## Error output
 
-**Error output**
+## Environment
 
-
-**Environment**
 - OS:
 - Python version:

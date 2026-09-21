@@ -14,7 +14,7 @@ import re
 import sys
 import time
 import zipfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from email.header import decode_header
 from email.utils import parsedate_to_datetime
 from pathlib import Path
@@ -62,7 +62,7 @@ def _find_matching_uid(imap: imaplib.IMAP4_SSL, sender: str, not_before: datetim
                 msg_date = None
         if msg_date is not None:
             if msg_date.tzinfo is None:
-                msg_date = msg_date.replace(tzinfo=timezone.utc)
+                msg_date = msg_date.replace(tzinfo=UTC)
             if msg_date < not_before:
                 continue
         return num
@@ -135,7 +135,9 @@ def wait_and_process(
 
         cer_files = sorted(out_dir.glob("*.cer"))
         if not cer_files:
-            print("Warning: no .cer file found in the zip; skipping PEM conversion.", file=sys.stderr)
+            print(
+                "Warning: no .cer file found in the zip; skipping PEM conversion.", file=sys.stderr
+            )
         for cer_file in cer_files:
             _convert_cer_to_crt(cer_file, cer_file.with_suffix(".crt"))
 
