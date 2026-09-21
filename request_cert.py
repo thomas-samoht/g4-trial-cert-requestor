@@ -11,7 +11,7 @@ an OIN.
 import argparse
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import requests
@@ -32,7 +32,7 @@ EMAIL_PATTERN = re.compile(r"^\S+@\S+\.\S+$")
 CSRF_RE = re.compile(r'name="csrf_token"\s+value="([^"]+)"')
 # The submit confirmation page shows the PFX password in an
 # alert-success block, e.g.:
-#   Het <strong>wachtwoord</strong> van uw ... certificaat is: <strong><code>trialG4-PKIpartners</code>
+#   Het <strong>wachtwoord</strong> ... is: <strong><code>trialG4-PKIpartners</code>
 PASSWORD_RE = re.compile(r"wachtwoord</strong>.*?<code>([^<]+)</code>", re.DOTALL)
 
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent / "config.env"
@@ -179,7 +179,7 @@ def main() -> None:
         "terms": "on",
     }
 
-    not_before = datetime.now(timezone.utc)
+    not_before = datetime.now(UTC)
     resp = session.post(SUBMIT_URL, data=data, headers={"Referer": EMBED_URL}, timeout=30)
 
     print(f"HTTP {resp.status_code}")
