@@ -41,6 +41,14 @@ def test_decode_handles_encoded_word_header():
     assert mail_watch._decode(encoded) == "café.zip"
 
 
+# --- _raw_message_bytes ---
+
+
+def test_raw_message_bytes_rejects_non_bytes_payload():
+    with pytest.raises(RuntimeError, match="Unexpected IMAP response format"):
+        mail_watch._raw_message_bytes([(b"1 (...)", 12345)])
+
+
 # --- _find_matching_uid ---
 
 
@@ -81,7 +89,7 @@ def test_find_matching_uid_returns_uid_for_message_after_not_before():
 
     not_before = dt.datetime(2025, 1, 1, tzinfo=dt.UTC)
     result = mail_watch._find_matching_uid(imap, "sender@example.com", not_before)
-    assert result == b"1"
+    assert result == "1"
 
 
 def test_find_matching_uid_skips_messages_with_failed_fetch():
@@ -94,7 +102,7 @@ def test_find_matching_uid_skips_messages_with_failed_fetch():
 
     not_before = dt.datetime(2025, 1, 1, tzinfo=dt.UTC)
     result = mail_watch._find_matching_uid(imap, "sender@example.com", not_before)
-    assert result == b"2"
+    assert result == "2"
 
 
 def test_find_matching_uid_treats_unparseable_date_as_match():
@@ -107,7 +115,7 @@ def test_find_matching_uid_treats_unparseable_date_as_match():
 
     not_before = dt.datetime(2025, 1, 1, tzinfo=dt.UTC)
     result = mail_watch._find_matching_uid(imap, "sender@example.com", not_before)
-    assert result == b"1"
+    assert result == "1"
 
 
 def test_find_matching_uid_replaces_missing_tzinfo():
@@ -120,7 +128,7 @@ def test_find_matching_uid_replaces_missing_tzinfo():
 
     not_before = dt.datetime(2025, 1, 1, tzinfo=dt.UTC)
     result = mail_watch._find_matching_uid(imap, "sender@example.com", not_before)
-    assert result == b"1"
+    assert result == "1"
 
 
 # --- _extract_zip_attachment ---
@@ -130,7 +138,7 @@ def test_extract_zip_attachment_raises_when_fetch_fails():
     imap = mock.Mock()
     imap.fetch.return_value = ("NO", None)
     with pytest.raises(RuntimeError, match="Failed to fetch"):
-        mail_watch._extract_zip_attachment(imap, b"1")
+        mail_watch._extract_zip_attachment(imap, "1")
 
 
 def test_extract_zip_attachment_raises_when_no_zip_found():
@@ -139,7 +147,7 @@ def test_extract_zip_attachment_raises_when_no_zip_found():
     imap = mock.Mock()
     imap.fetch.return_value = ("OK", [(b"1 (...)", msg.as_bytes())])
     with pytest.raises(RuntimeError, match="No .zip attachment"):
-        mail_watch._extract_zip_attachment(imap, b"1")
+        mail_watch._extract_zip_attachment(imap, "1")
 
 
 def test_extract_zip_attachment_returns_filename_and_bytes():
@@ -151,7 +159,7 @@ def test_extract_zip_attachment_returns_filename_and_bytes():
     imap = mock.Mock()
     imap.fetch.return_value = ("OK", [(b"1 (...)", msg.as_bytes())])
 
-    filename, payload = mail_watch._extract_zip_attachment(imap, b"1")
+    filename, payload = mail_watch._extract_zip_attachment(imap, "1")
 
     assert filename == "cert.zip"
     assert payload == b"zip-bytes-here"
@@ -244,7 +252,7 @@ def test_wait_and_process_downloads_and_converts_certificate(tmp_path):
     assert len(crt_files) == 1
     loaded = x509.load_pem_x509_certificate(crt_files[0].read_bytes())
     assert loaded.public_bytes(serialization.Encoding.DER) == der_bytes
-    imap.store.assert_called_once_with(b"1", "+FLAGS", "\\Seen")
+    imap.store.assert_called_once_with("1", "+FLAGS", "\\Seen")
     imap.logout.assert_called_once()
 
 

@@ -14,7 +14,7 @@ cp config.example.env config.env
 ```
 
 `uv sync` installs both the runtime and dev dependencies (pytest, pytest-cov,
-ruff):
+ruff, mypy):
 
 ```bash
 uv sync
@@ -39,6 +39,14 @@ uv run ruff format --check .
 
 Run `uv run ruff format .` (without `--check`) to apply formatting fixes.
 
+## Type checking
+
+```bash
+uv run mypy .
+```
+
+Configured in `pyproject.toml` under `[tool.mypy]`.
+
 Markdown files are linted with
 [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2), using
 the rules in `.markdownlint-cli2.jsonc`. You can run it locally with:
@@ -50,13 +58,13 @@ npx markdownlint-cli2 "**/*.md"
 ## Submitting changes
 
 1. Fork the repo and create a branch for your change.
-2. Make sure `uv run pytest`, `uv run ruff check .`, and
-   `uv run ruff format --check .` all pass.
+2. Make sure `uv run pytest`, `uv run ruff check .`, `uv run ruff format
+   --check .`, and `uv run mypy .` all pass.
 3. Open a pull request using the provided template, filling in what you
    tested.
 
-CI runs the same checks (tests, lint, format, markdown lint) on every pull
-request, so it's worth running them locally first.
+CI runs the same checks (tests, lint, format, type check, markdown lint)
+on every pull request, so it's worth running them locally first.
 
 ## Reporting bugs
 
